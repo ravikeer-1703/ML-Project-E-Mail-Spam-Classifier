@@ -5,7 +5,9 @@ import re
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-
+import nltk
+nltk.download('punkt')
+nltk.download('stopwords')
 
 pipeline = pickle.load(open("pipeline.pkl", "rb"))
 
