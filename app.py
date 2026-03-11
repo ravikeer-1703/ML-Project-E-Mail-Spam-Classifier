@@ -5,9 +5,14 @@ import re
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+
 import nltk
-nltk.download('punkt')
-nltk.download('stopwords')
+@st.cache_resource
+def download_nltk():
+    nltk.download("punkt")
+    nltk.download("stopwords")
+    nltk.download("wordnet")
+download_nltk()
 
 pipeline = pickle.load(open("pipeline.pkl", "rb"))
 
@@ -16,10 +21,14 @@ st.space()
 text_area = st.text_area("Enter your Email here")
 button1 = st.button("Predict", key=0)
 
+@st.cache_data
+def preprocess_text(text):
+    return text_preprocessing(text)
+
 if text_area:
     if button1:
-        text_process = text_preprocessing(text_area)
-        prediction = pipeline.predict([text_process])[0]
+        process = preprocess_text(text_area)
+        prediction = pipeline.predict([process])[0]
 
         if prediction=="spam":
             st.error("This is Spam")
@@ -36,7 +45,7 @@ if text_area:
     col3.metric("Sentences", len(re.split(r"[.]+", text_area)))
 
 st.space()
-st.text("------------------------------------------------------------------------------------------------------------------------------------------")
+st.space()
 
 st.subheader("Or Upload CSV File Here")
 csv_file = st.file_uploader("Choose a file", type = ["csv"])
@@ -49,8 +58,8 @@ if csv_file is not None:
     data_column = st.selectbox("Select Column", df.columns)
 
     if button2:
-        text_process = df[data_column].apply(text_preprocessing)
-        prediction = pipeline.predict(text_process)
+        processed = df[data_column].apply(preprocess_text)
+        prediction = pipeline.predict(processed)
         spam_mail = []
         ham_mail = []
 
@@ -66,7 +75,7 @@ if csv_file is not None:
         col4, col5, col6 = st.columns(3)
         col4.metric("Number of Spam mails", len(spam_mail))
         col5.metric("Number of Ham mails", len(ham_mail))
-        col6.metric("Percentage of Spam mails", np.round((len(spam_mail)/len(ham_mail))*100,2))
+        col6.metric("% Spam mails", np.round((len(spam_mail)/len(ham_mail))*100,2))
 
         st.space()
         x = ["spam", "ham"]
