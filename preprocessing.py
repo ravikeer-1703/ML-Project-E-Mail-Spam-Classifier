@@ -2,13 +2,13 @@ import nltk
 import pickle
 import re
 import string
-nltk.download("stopwords")
 from nltk.corpus import stopwords
 from nltk.stem import  WordNetLemmatizer
 wnl = WordNetLemmatizer()
 stopwords_list = set(stopwords.words("english"))
 nltk.download("stopwords")
 nltk.download("punkt")
+nltk.download("stopwords")
 
 
 Words_dict = pickle.load(open("words_vocab.pkl", "rb"))
