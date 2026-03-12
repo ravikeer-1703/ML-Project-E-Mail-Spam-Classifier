@@ -32,10 +32,8 @@ if text_area:
 
         if prediction=="spam":
             st.error("This is Spam")
-        elif prediction=="ham":
-            st.success("This is not Spam")
         else:
-            st.success("")
+            st.success("This is not Spam")
 
     st.space()
     input_static = st.text("Statics of Your input")
