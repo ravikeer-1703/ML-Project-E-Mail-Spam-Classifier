@@ -45,7 +45,7 @@ def text_preprocessing(text):
     # Removing Digits and punctuations
     text = " ".join(final_text)
     final_text.clear()
-    text = re.sub(r"\d+", "", str(text))        # remove digits
+   # text = re.sub(r"\d+", "", str(text))        # remove digits
     text = text.translate(str.maketrans("" ,"" ,string.punctuation)) # punctuations
 
     # Replacing suffix and prefix word into full word
