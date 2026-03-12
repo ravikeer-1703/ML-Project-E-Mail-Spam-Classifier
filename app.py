@@ -14,7 +14,7 @@ def download_nltk():
     nltk.download("wordnet")
 download_nltk()
 
-pipeline = pickle.load(open("pipeline.pkl", "rb"))
+pipeline = pickle.load(open("tf_rf_pipeline.pkl", "rb"))
 
 title = st.title("Email/SMS Spam Classifier")
 st.space()
@@ -30,10 +30,12 @@ if text_area:
         process = preprocess_text(text_area)
         prediction = pipeline.predict([process])[0]
 
-        if prediction=="spam":
+        if prediction == 1:
             st.error("This is Spam")
-        else:
+        elif prediction == 0:
             st.success("This is not Spam")
+        else:
+            st.error("Something went wrong please try again")
 
     st.space()
     input_static = st.text("Statics of Your input")
@@ -62,10 +64,12 @@ if csv_file is not None:
         ham_mail = []
 
         for label in prediction:
-            if label=="spam" or label==1:
+            if label == 1:
                 spam_mail.append(label)
-            else:
+            elif label == 0:
                 ham_mail.append(label)
+            else:
+                st.error("Something went wrong please try again")
 
 
         st.space()
@@ -73,7 +77,7 @@ if csv_file is not None:
         col4, col5, col6 = st.columns(3)
         col4.metric("Number of Spam mails", len(spam_mail))
         col5.metric("Number of Ham mails", len(ham_mail))
-        col6.metric("% Spam mails", np.round((len(spam_mail)/len(ham_mail))*100,2))
+        col6.metric("% Spam mails", np.round((len(spam_mail)/len(prediction))*100,2))
 
         st.space()
         x = ["spam", "ham"]
