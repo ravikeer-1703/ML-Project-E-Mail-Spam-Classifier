@@ -6,11 +6,13 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import nltk
+
 @st.cache_resource
 def download_nltk():
     nltk.download("punkt")
     nltk.download("stopwords")
     nltk.download("wordnet")
+    return True
 download_nltk()
 
 pipeline = pickle.load(open("tf_rf_pipeline.pkl", "rb"))
@@ -29,9 +31,9 @@ if text_area:
         process = preprocess_text(text_area)
         prediction = pipeline.predict([process])[0]
 
-        if prediction == 1:
+        if (prediction == 1) or (prediction == "spam"):
             st.error("This is Spam")
-        elif prediction == 0:
+        elif (prediction == 0) or (prediction == "ham"):
             st.success("This is not Spam")
         else:
             st.error("Something went wrong please try again")
