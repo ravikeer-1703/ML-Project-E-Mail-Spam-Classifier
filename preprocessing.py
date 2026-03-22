@@ -1,61 +1,32 @@
-import nltk
 import pickle
 import re
-import string
-import streamlit as st
 
-@st.cache_resource
-def down_nltk():
-    nltk.download("stopwords")
-    nltk.download("punkt")
-    nltk.download("punkt_tab")
-    nltk.download("stopwords")
-down_nltk()
+Words_dict = pickle.load(open("words_vocabulary.pkl", "rb"))
 
-Words_dict = pickle.load(open("words_vocab.pkl", "rb"))
+from nltk.stem import  WordNetLemmatizer
+wnl = WordNetLemmatizer()
 
 # Text preprocessing function:
-from nltk.corpus import stopwords
-from nltk.stem import  WordNetLemmatizer
-
-wnl = WordNetLemmatizer()
-stopwords_list = set(stopwords.words("english"))
-
 def text_preprocessing(text):
-    # Clean text
-    text = re.sub(r"\d+", "", str(text))
-    text = text.translate(str.maketrans("", "", string.punctuation))
     text = text.lower()
-
-    # Tokenize and process
     tokens = text.split()
-    processed_tokens = []
 
+    process_words = []
     for token in tokens:
-        # Keep only ASCII words
-        if not token.isascii():
-            continue
-
-        # Remove stopwords
-        if token in stopwords_list:
-            continue
-
         # Handle contractions
         if token in Words_dict:
-            token = Words_dict[token]
+            process_words.append(Words_dict[token])
+        else:
+            process_words.append(token)
 
         # Lemmatization
-        token = wnl.lemmatize(token, pos="v")
-        token = wnl.lemmatize(token, pos="n")
-        token = wnl.lemmatize(token, pos="a")
+    process_words = " ".join(process_words)
+    token1 = wnl.lemmatize(process_words, pos="v")
+    token2 = wnl.lemmatize(token1, pos="n")
+    token3 = wnl.lemmatize(token2, pos="a")
+    digit_remove = re.sub(r"\d+", "", token3)
 
-        # Keep words with length >= 2
-        if len(token) > 2:
-            processed_tokens.append(token)
-
-    # Join and clean
-    final_output = " ".join(processed_tokens)
-    final_output = re.sub(r"\s+", " ", final_output)
-    final_output = re.sub(r"(.)\1{3,}", r"\1\1", final_output)
-
-    return final_output.strip()
+    # handling repeating words by allowing only 2 time repeatation
+    final_output = re.sub(r"(.)\1{3,}", r"\1\1", digit_remove)
+    final_text = re.sub(r"\s+", " ", final_output)
+    return final_text.strip()

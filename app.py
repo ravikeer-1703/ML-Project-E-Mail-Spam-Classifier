@@ -5,17 +5,8 @@ import re
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import nltk
 
-@st.cache_resource
-def download_nltk():
-    nltk.download("punkt")
-    nltk.download("stopwords")
-    nltk.download("wordnet")
-    return True
-download_nltk()
-
-pipeline = pickle.load(open("tf_rf_pipeline.pkl", "rb"))
+pipeline = pickle.load(open("LR_TF_pipeline.pkl", "rb"))
 
 title = st.title("Email/SMS Spam Classifier")
 st.space()
